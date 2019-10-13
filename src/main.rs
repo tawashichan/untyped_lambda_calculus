@@ -325,22 +325,24 @@ fn prod_n(n: i64) -> Lambda {
         format!("x_{:?}",n),
         box p_abs,
     );
-    (2..n + 1).fold(abs,|sum,current|
+    (1..n).fold(abs,|sum,current|
         Lambda::Abstruct(
-            format!("x_{:?}",n + 1 - current),
+            format!("x_{:?}",n - current),
             box sum
         )
     )
 }
 
 fn prod_n_i(n: i64,i: i64) -> Lambda {
-    (1..n + 1).fold(Lambda::Term(format!("x_{:?}",i)),|sum,current|
+    (0..n).fold(Lambda::Term(format!("x_{:?}",i)),|sum,current|
         Lambda::Abstruct(
-            format!("x_{:?}",n + 1 - current),
+            format!("x_{:?}",n - current),
             box sum
         )
     )
 }
+
+
 
 fn main() {
 
