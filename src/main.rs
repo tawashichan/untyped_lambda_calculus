@@ -120,7 +120,13 @@ fn gen_unique_type_var_name() -> String {
 }
 
 fn zero() -> Lambda {
-    Lambda::Abstruct("f".to_string(),box Lambda::Abstruct("z".to_string(),box Lambda::Term("z".to_string())))
+    Lambda::Abstruct(
+        "f".to_string(),
+        box Lambda::Abstruct(
+            "z".to_string(),
+            box Lambda::Term("z".to_string())
+        )
+    )
 }
 
 fn one() -> Lambda {
@@ -210,6 +216,28 @@ fn add() -> Lambda {
     )
 }
 
+fn n(num: i64) -> Lambda {
+    match num {
+        0 => zero(),
+        _ => {
+            let init = Lambda::Term("z".to_string());
+            let app = (0..num).fold(init,|acm,num|
+                Lambda::App(
+                    box Lambda::Term("f".to_string()),
+                    box acm,
+                )
+            );
+            Lambda::Abstruct(
+                "f".to_string(),
+                box Lambda::Abstruct(
+                    "z".to_string(),
+                    box app,
+                )
+            )
+        }
+    }
+}
+
 fn alpha_equivalence(exp1: Lambda,exp2: Lambda) -> bool {
     match (exp1,exp2) {
         (Lambda::Abstruct(v1,box e1),Lambda::Abstruct(v2,box e2)) => {
@@ -273,7 +301,18 @@ fn assign_test() {
         box Lambda::Term("y".to_string()),
         box Lambda::Term("z".to_string()),
     ));
-    //assert_eq!(abs,result);
+
+    let expected_result = Lambda::Abstruct(
+        "b".to_string(),
+        box Lambda::App(
+            box Lambda::App(
+                box Lambda::Term("y".to_string()),
+                box Lambda::Term("z".to_string()),
+            ),
+            box Lambda::Term("b".to_string()),
+        )
+    );
+    assert!(alpha_equivalence(result,expected_result));
 }
 
 #[test]
@@ -540,4 +579,16 @@ fn alpha_equivalence_test(){
     );
     assert!(alpha_equivalence(exp1.clone(),exp2));
     assert!(!alpha_equivalence(exp1, exp3));
+}
+
+#[test]
+fn n_0(){
+    let z = n(0);
+    assert!(alpha_equivalence(z,zero()));
+}
+
+#[test]
+fn n_1(){
+    let o = n(1);
+    assert!(alpha_equivalence(o,one()));
 }
