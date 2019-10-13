@@ -592,3 +592,22 @@ fn n_1(){
     let o = n(1);
     assert!(alpha_equivalence(o,one()));
 }
+
+#[test]
+fn n_add_one_is_succ_n(){
+    let n = n(100);
+    let b1 = Lambda::App(
+        box Lambda::App(
+            box add(),
+            box one(),
+        ),
+        box n.clone(),
+    );
+    let b2 = Lambda::App(
+        box succ(),
+        box n,
+    );
+    let b3 = beta_reduction_multiple(b1);
+    let b4 = beta_reduction_multiple(b2);
+    assert!(alpha_equivalence(b3, b4));
+}
