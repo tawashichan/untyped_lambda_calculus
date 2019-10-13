@@ -342,7 +342,42 @@ fn prod_n_i(n: i64,i: i64) -> Lambda {
     )
 }
 
-
+fn turing_y_combinator() -> Lambda {
+    Lambda::App(
+        box Lambda::Abstruct(
+            "z".to_string(),
+            box Lambda::Abstruct(
+                "x".to_string(),
+                box Lambda::App(
+                    box Lambda::Term("x".to_string()),
+                    box Lambda::App(
+                        box Lambda::App(
+                            box Lambda::Term("z".to_string()),
+                            box Lambda::Term("z".to_string()),
+                        ),
+                        box Lambda::Term("x".to_string()),
+                    )
+                )
+            )
+        ),
+        box Lambda::Abstruct(
+            "z".to_string(),
+            box Lambda::Abstruct(
+                "x".to_string(),
+                box Lambda::App(
+                    box Lambda::Term("x".to_string()),
+                    box Lambda::App(
+                        box Lambda::App(
+                            box Lambda::Term("z".to_string()),
+                            box Lambda::Term("z".to_string()),
+                        ),
+                        box Lambda::Term("x".to_string()),
+                    )
+                )
+            )
+        )
+    )
+}
 
 fn main() {
 
