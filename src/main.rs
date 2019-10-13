@@ -333,9 +333,14 @@ fn prod_n(n: i64) -> Lambda {
     )
 }
 
-/*fn prid_n_j() -> Lambda {
-
-}*/
+fn prod_n_i(n: i64,i: i64) -> Lambda {
+    (1..n + 1).fold(Lambda::Term(format!("x_{:?}",i)),|sum,current|
+        Lambda::Abstruct(
+            format!("x_{:?}",n + 1 - current),
+            box sum
+        )
+    )
+}
 
 fn main() {
 
@@ -883,4 +888,72 @@ fn prod_n_test_one(){
         )
     );
     assert_eq!(p,expected_result);
+}
+
+#[test]
+fn prod_n_i_test(){
+    let p = prod_n_i(2,1);
+    let expected_result = Lambda::Abstruct(
+        "x_1".to_string(),
+        box Lambda::Abstruct(
+            "x_2".to_string(),
+            box Lambda::Term("x_1".to_string()),
+        )
+    );
+    assert_eq!(p,expected_result);
+}
+
+
+#[test]
+fn prod_n_i_test2(){
+    let p = prod_n_i(2,2);
+    let expected_result = Lambda::Abstruct(
+        "x_1".to_string(),
+        box Lambda::Abstruct(
+            "x_2".to_string(),
+            box Lambda::Term("x_2".to_string()),
+        )
+    );
+    assert_eq!(p,expected_result);
+}
+
+#[test]
+fn prod_n_i_test3(){
+    let p = prod_n_i(5,2);
+    let expected_result = Lambda::Abstruct(
+        "x_1".to_string(),
+        box Lambda::Abstruct(
+            "x_2".to_string(),
+            box Lambda::Abstruct(
+                "x_3".to_string(),
+                box Lambda::Abstruct(
+                    "x_4".to_string(),
+                    box Lambda::Abstruct(
+                        "x_5".to_string(),
+                        box Lambda::Term("x_2".to_string()),
+                    )
+                )
+            )
+        )
+    );
+    assert_eq!(p,expected_result);
+}
+
+
+#[test]
+fn prod_test(){
+    let p = Lambda::App(
+        box Lambda::App(
+            box prod_n(2),
+            box Lambda::Term("M_1".to_string()),
+        ),
+        box Lambda::Term("M_2".to_string()),
+    );
+    let b = Lambda::App(
+        box p,
+        box prod_n_i(2,1),
+    );
+    let b1 = beta_reduction_multiple(b);
+    println!("{:?}",b1);
+    assert!(alpha_equivalence(b1,Lambda::Term("M_1".to_string())));
 }
