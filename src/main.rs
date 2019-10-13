@@ -310,6 +310,33 @@ fn alpha_equivalence(exp1: Lambda,exp2: Lambda) -> bool {
     }
 }
 
+fn prod_n(n: i64) -> Lambda {
+    let x = (1..=n).fold(Lambda::Term("P".to_string()),|sum,current|
+        Lambda::App(
+            box sum,
+            box Lambda::Term(format!("x_{:?}",current)),
+        )
+    );
+    let p_abs = Lambda::Abstruct(
+        "P".to_string(),
+        box x,
+    );
+    let abs = Lambda::Abstruct(
+        format!("x_{:?}",n),
+        box p_abs,
+    );
+    (2..n + 1).fold(abs,|sum,current|
+        Lambda::Abstruct(
+            format!("x_{:?}",n + 1 - current),
+            box sum
+        )
+    )
+}
+
+/*fn prid_n_j() -> Lambda {
+
+}*/
+
 fn main() {
 
 }
@@ -812,4 +839,48 @@ fn is_zero_test(){
     );
     let b1 = beta_reduction_multiple(b.clone());
     assert!(alpha_equivalence(b1, f()));
+}
+
+#[test]
+fn prod_n_test_three(){
+    let p = prod_n(3);
+    let expected_result = Lambda::Abstruct(
+        "x_1".to_string(),
+        box Lambda::Abstruct(
+           "x_2".to_string(),
+           box Lambda::Abstruct(
+               "x_3".to_string(),
+               box Lambda::Abstruct(
+                   "P".to_string(),
+                    box Lambda::App(
+                        box Lambda::App(
+                            box Lambda::App(
+                                box Lambda::Term("P".to_string()),
+                                box Lambda::Term("x_1".to_string()),  
+                            ),
+                            box Lambda::Term("x_2".to_string()),
+                        ),
+                        box Lambda::Term("x_3".to_string()),
+                    )
+               )
+           )
+        )
+    );
+    assert_eq!(p,expected_result);
+}
+
+#[test]
+fn prod_n_test_one(){
+    let p = prod_n(1);
+    let expected_result = Lambda::Abstruct(
+        "x_1".to_string(),
+        box Lambda::Abstruct(
+            "P".to_string(),
+            box Lambda::App(
+                box Lambda::Term("P".to_string()),
+                box Lambda::Term("x_1".to_string()),
+            )
+        )
+    );
+    assert_eq!(p,expected_result);
 }
