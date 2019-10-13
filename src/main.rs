@@ -379,6 +379,86 @@ fn turing_y_combinator() -> Lambda {
     )
 }
 
+fn pred() -> Lambda {
+    Lambda::Abstruct(
+        "n".to_string(),
+        box Lambda::Abstruct(
+            "f".to_string(),
+            box Lambda::Abstruct(
+            "x".to_string(),
+                box Lambda::App(
+                    box Lambda::App(
+                        box Lambda::App(
+                            box Lambda::Term("n".to_string()),
+                            box Lambda::Abstruct(
+                                "g".to_string(),
+                                box Lambda::Abstruct(
+                                    "h".to_string(),
+                                    box Lambda::App(
+                                        box Lambda::Term("h".to_string()),
+                                        box Lambda::App(
+                                            box Lambda::Term("g".to_string()),
+                                            box Lambda::Term("f".to_string()),
+                                        )
+                                    )
+                                )
+                            )
+                        ),
+                        box Lambda::Abstruct(
+                            "u".to_string(),
+                            box Lambda::Term("x".to_string()),
+                        )
+                    ),
+                    box Lambda::Abstruct(
+                        "u".to_string(),
+                        box Lambda::Term("u".to_string()),
+                    )
+                ),
+            )
+        )
+    )
+}
+
+/*fn fact() -> Lambda {
+    Lambda::App(
+        box turing_y_combinator(),
+        box Lambda::Abstruct(
+            "fact".to_string(),
+            box Lambda::Abstruct(
+                "n".to_string(),
+                box Lambda::App(
+                    box Lambda::App(
+                        box Lambda::App(
+                            box cond(),
+                            box Lambda::App(
+                                box is_zero(),
+                                box Lambda::Term("n".to_string())
+                            ),
+                        ),
+                        box one(),
+                    ),
+                    box Lambda::App(
+                        box Lambda::App(
+                            box mul(),
+                            box Lambda::Term("n".to_string()),
+                        ),
+                        box Lambda::App(
+                            box Lambda::Term("fact".to_string()),
+                            box Lambda::App(
+                                box Lambda::App(
+                                    box sub(),
+                                    box Lambda::Term("n".to_string()),
+                                ),
+                                box one(),
+                            )
+                        ),
+                    ),
+                )
+            )
+        )
+    )
+}*/
+
 fn main() {
 
 }
@@ -993,4 +1073,25 @@ fn prod_test(){
     let b1 = beta_reduction_multiple(b);
     println!("{:?}",b1);
     assert!(alpha_equivalence(b1,Lambda::Term("M_1".to_string())));
+}
+
+
+#[test]
+fn is_pred_one_zero() {
+    let b = Lambda::App(
+        box pred(),
+        box one(),
+    );
+    let b1 = beta_reduction_multiple(b);
+    assert!(alpha_equivalence(zero(),b1));
+}
+
+#[test]
+fn is_pred_two_one() {
+    let b = Lambda::App(
+        box pred(),
+        box two(),
+    );
+    let b1 = beta_reduction_multiple(b);
+    assert!(alpha_equivalence(one(),b1));
 }
