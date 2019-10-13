@@ -426,16 +426,16 @@ fn sub() -> Lambda {
             "n".to_string(),
             box Lambda::App(
                 box Lambda::App(
-                    box Lambda::Term("m".to_string()),
+                    box Lambda::Term("n".to_string()),
                     box pred(),
                 ),
-                box Lambda::Term("n".to_string()),
+                box Lambda::Term("m".to_string()),
             )
         )
     )
 }
 
-/*fn fact() -> Lambda {
+fn fact() -> Lambda {
     Lambda::App(
         box turing_y_combinator(),
         box Lambda::Abstruct(
@@ -473,7 +473,7 @@ fn sub() -> Lambda {
             )
         )
     )
-}*/
+}
 
 fn main() {
 
@@ -1130,9 +1130,9 @@ fn five_sub_one_four(){
     let b = Lambda::App(
         box Lambda::App(
             box sub(),
-            box one(),
+            box n(5),
         ),
-        box n(5),
+        box n(1),
     );
     let b1 = beta_reduction_multiple(b);
     assert!(alpha_equivalence(n(4),b1));
@@ -1143,10 +1143,20 @@ fn five_sub_three_two(){
     let b = Lambda::App(
         box Lambda::App(
             box sub(),
-            box n(3),
+            box n(5),
         ),
-        box n(5),
+        box n(3),
     );
     let b1 = beta_reduction_multiple(b);
     assert!(alpha_equivalence(n(2),b1));
+}
+
+#[test]
+fn fact_test(){
+    let b = Lambda::App(
+        box fact(),
+        box n(3),
+    );
+    let b1 = beta_reduction_multiple(b);
+    assert!(alpha_equivalence(n(6),b1));
 }
