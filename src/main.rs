@@ -796,3 +796,20 @@ fn exp_two(){
     let b1 = beta_reduction_multiple(b.clone());
     assert!(alpha_equivalence(b1, one()));
 }
+
+#[test]
+fn is_zero_test(){
+    let b = Lambda::App(
+        box is_zero(),
+        box zero(),
+    );
+    let b1 = beta_reduction_multiple(b.clone());
+    assert!(alpha_equivalence(b1, t()));
+
+    let b = Lambda::App(
+        box is_zero(),
+        box n(100),
+    );
+    let b1 = beta_reduction_multiple(b.clone());
+    assert!(alpha_equivalence(b1, f()));
+}
