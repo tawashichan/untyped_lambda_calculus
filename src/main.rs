@@ -419,6 +419,22 @@ fn pred() -> Lambda {
     )
 }
 
+fn sub() -> Lambda {
+    Lambda::Abstruct(
+        "m".to_string(),
+        box Lambda::Abstruct(
+            "n".to_string(),
+            box Lambda::App(
+                box Lambda::App(
+                    box Lambda::Term("m".to_string()),
+                    box pred(),
+                ),
+                box Lambda::Term("n".to_string()),
+            )
+        )
+    )
+}
+
 /*fn fact() -> Lambda {
     Lambda::App(
         box turing_y_combinator(),
@@ -1094,4 +1110,43 @@ fn is_pred_two_one() {
     );
     let b1 = beta_reduction_multiple(b);
     assert!(alpha_equivalence(one(),b1));
+}
+
+#[test]
+fn one_sub_one_zero(){
+    let b = Lambda::App(
+        box Lambda::App(
+            box sub(),
+            box one(),
+        ),
+        box one(),
+    );
+    let b1 = beta_reduction_multiple(b);
+    assert!(alpha_equivalence(zero(),b1));
+}
+
+#[test]
+fn five_sub_one_four(){
+    let b = Lambda::App(
+        box Lambda::App(
+            box sub(),
+            box one(),
+        ),
+        box n(5),
+    );
+    let b1 = beta_reduction_multiple(b);
+    assert!(alpha_equivalence(n(4),b1));
+}
+
+#[test]
+fn five_sub_three_two(){
+    let b = Lambda::App(
+        box Lambda::App(
+            box sub(),
+            box n(3),
+        ),
+        box n(5),
+    );
+    let b1 = beta_reduction_multiple(b);
+    assert!(alpha_equivalence(n(2),b1));
 }
