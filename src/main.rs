@@ -238,6 +238,25 @@ fn n(num: i64) -> Lambda {
     }
 }
 
+fn mul() -> Lambda {
+    Lambda::Abstruct(
+        "m".to_string(),
+        box Lambda::Abstruct(
+            "n".to_string(),
+            box Lambda::App(
+                box Lambda::App(
+                    box Lambda::Term("m".to_string()),
+                    box Lambda::App(
+                        box add(),
+                        box Lambda::Term("n".to_string()),
+                    )
+                ),
+                box zero(),
+            )
+        )
+    )
+}
+
 fn alpha_equivalence(exp1: Lambda,exp2: Lambda) -> bool {
     match (exp1,exp2) {
         (Lambda::Abstruct(v1,box e1),Lambda::Abstruct(v2,box e2)) => {
@@ -610,4 +629,56 @@ fn n_add_one_is_succ_n(){
     let b3 = beta_reduction_multiple(b1);
     let b4 = beta_reduction_multiple(b2);
     assert!(alpha_equivalence(b3, b4));
+}
+
+#[test]
+fn zero_mul_zero(){
+    let b = Lambda::App(
+        box Lambda::App(
+            box mul(),
+            box zero(),
+        ),
+        box zero(),
+    );
+    let b1 = beta_reduction_multiple(b);
+    assert!(alpha_equivalence(b1, zero()));
+}
+
+#[test]
+fn one_mul_two(){
+    let b = Lambda::App(
+        box Lambda::App(
+            box mul(),
+            box one(),
+        ),
+        box two(),
+    );
+    let b1 = beta_reduction_multiple(b);
+    assert!(alpha_equivalence(b1, two()));
+}
+
+#[test]
+fn one_mul_zero() {
+    let b = Lambda::App(
+        box Lambda::App(
+            box mul(),
+            box one(),
+        ),
+        box zero(),
+    );
+    let b1 = beta_reduction_multiple(b);
+    assert!(alpha_equivalence(b1, zero()));
+}
+
+#[test]
+fn five_mul_ten() {
+    let b = Lambda::App(
+        box Lambda::App(
+            box mul(),
+            box n(5),
+        ),
+        box n(10),
+    );
+    let b1 = beta_reduction_multiple(b);
+    assert!(alpha_equivalence(b1, n(50)));
 }
